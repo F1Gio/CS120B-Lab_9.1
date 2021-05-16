@@ -16,7 +16,7 @@
 volatile unsigned char TimerFlag = 0;
 unsigned long _avr_timer_M = 1;
 unsigned long _avr_timer_cntcurr = 0;
-enum SM1_States {SM1_Start, SM1_PB0, SM1_OFF1, SM1_PB1, SM1_OFF2, SM1_PB2 } SM1_State;
+enum SM1_States { SM1_PB0 ,SM1_PB1, SM1_PB2 } SM1_State;
 enum SM2_States {SM2_Start, SM2_PB3 } SM2_State;
 enum SM3_States {SM3_SET} SM3_State;
 
@@ -56,55 +56,31 @@ void TimerSet(unsigned long M) {
 }
 
 void ThreeLED() {
-       switch(SM1_State) {
-	       case SM1_Start:
-			SM1_State = SM1_PB0;
-	 		break;
-		
+       switch(SM1_State) {		
 		case SM1_PB0:
-			SM1_State = SM1_OFF1;
-			break;
-
-		case SM1_OFF1:
 			SM1_State = SM1_PB1;
 			break;
 
 		case SM1_PB1:
-			SM1_State = SM1_OFF2;
-			break;
-
-		case SM1_OFF2:
 			SM1_State = SM1_PB2;
 			break;
 
 		case SM1_PB2:
-			SM1_State = SM1_Start;
+			SM1_State = SM1_PB0;
 			break;
 
 		default:
-			SM1_State = SM1_Start;
+			SM1_State = SM1_PB0;
 			break;
        }
 
-	switch (SM1_State) {
-		case SM1_Start: 
-			TLED = 0x00;
-			break;
-
+	switch (SM1_State){
 		case SM1_PB0:
 			TLED = 0x01;
 			break;
 
-		case SM1_OFF1:
-			TLED = 0x00;
-			break;
-
 		case SM1_PB1:
 			TLED = 0x02;
-			break;
-
-		case SM1_OFF2:
-			TLED = 0x00;
 			break;
 
 		case SM1_PB2:
