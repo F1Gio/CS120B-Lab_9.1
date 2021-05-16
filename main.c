@@ -16,8 +16,8 @@
 volatile unsigned char TimerFlag = 0;
 unsigned long _avr_timer_M = 1;
 unsigned long _avr_timer_cntcurr = 0;
-enum SM1_States {SM1_Start, SM1_PB0, SM1_OFF1, SM1_PB1, SM1_OFF2, SM1_PB2, SM1_Start } SM1_State;
-enum SM2_States {SM2_Start, SM1_PB3 } SM2_State;
+enum SM1_States {SM1_Start, SM1_PB0, SM1_OFF1, SM1_PB1, SM1_OFF2, SM1_PB2 } SM1_State;
+enum SM2_States {SM2_Start, SM2_PB3 } SM2_State;
 enum SM3_States {SM3_SET} SM3_State;
 
 unsigned char LED = 0x00;
@@ -55,7 +55,64 @@ void TimerSet(unsigned long M) {
 	_avr_timer_cntcurr = _avr_timer_M;
 }
 
-void ThreeLED() { 
+void ThreeLED() {
+       switch(SM1_State) {
+	       case SM1_Start:
+			SM1_State = SM1_PB0;
+	 		break;
+		
+		case SM1_PB0:
+			SM1_State = SM1_OFF1;
+			break;
+
+		case SM1_OFF1:
+			SM1_State = SM1_PB1;
+			break;
+
+		case SM1_PB1:
+			SM1_State = SM1_OFF2;
+			break;
+
+		case SM1_OFF2:
+			SM1_State = SM1_PB2;
+			break;
+
+		case SM1_PB2:
+			SM1_State = SM1_Start;
+			break;
+
+		default:
+			SM1_State = SM1_Start;
+			break;
+       }
+
+	switch (SM1_State) {
+		case SM1_Start: 
+			TLED = 0x00;
+			break;
+
+		case SM1_PB0:
+			TLED = 0x01;
+			break;
+
+		case SM1_OFF1:
+			TLED = 0x00;
+			break;
+
+		case SM1_PB1:
+			TLED = 0x02;
+			break;
+
+		case SM1_OFF2:
+			TLED = 0x00;
+			break;
+
+		case SM1_PB2:
+			TLED = 0x04;
+			break;
+
+	}
+
 
 }
 
@@ -81,7 +138,7 @@ void BlinkingLED() {
 			break;
 
 		case SM2_PB3:
-			BLED = 0x04;
+			BLED = 0x08;
 			break;
 
 	}
@@ -90,6 +147,18 @@ void BlinkingLED() {
 
 
 void CombineLED() {
+	switch(SM3_State) {
+		case SM3_SET:
+			SM3_State = SM3_SET;
+			break;
+
+		}
+
+	switch (SM3_State) {
+		case SM3_SET:
+			PORTB = 0xF0 & (TLED | BLED);
+			break;
+	}
 
 }
 
