@@ -127,7 +127,7 @@ void BlinkingLED() {
 			break;
 
 		default: 
-			SM1_Start;
+			SM2_State = SM2_Start;
 			break;
 
 	}
@@ -156,7 +156,7 @@ void CombineLED() {
 
 	switch (SM3_State) {
 		case SM3_SET:
-			PORTB = 0xF0 & (TLED | BLED);
+			PORTB = TLED | BLED;
 			break;
 	}
 
